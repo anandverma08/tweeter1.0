@@ -1,9 +1,27 @@
 <mat-toolbar color="primary">
- <span><a routerLink="/">Tweeter!</a></span>
- <span class="spacer"></span>
- <ul>
-   <li><span><a mat-button routerLink="/create">New Post!</a></span></li>
-   <li><span><a mat-button routerLink="/login">Login</a></span></li>
-   <li><span><a mat-button routerLink="/signUp">Sign Up</a></span></li>
- </ul>
+  <span>
+    <a routerLink="/">Tweeter!</a>
+  </span>
+  <span class="spacer"></span>
+  <ul>
+    <li *ngIf="isUserAuthenticated">
+      <span>
+        <a mat-button routerLink="/create">New Post!</a>
+      </span>
+    </li>
+    <li *ngIf="!isUserAuthenticated">
+      <span>
+        <a mat-button routerLink="/login">Login</a>
+      </span>
+    </li>
+    <li *ngIf="!isUserAuthenticated">
+      <span>
+        <a mat-button routerLink="/signUp">Sign Up</a>
+      </span>
+    </li>
+    <li *ngIf="isUserAuthenticated">
+      <button mat-button (click)="logOut()">Sign Out</button>
+    </li>
+
+  </ul>
 </mat-toolbar>

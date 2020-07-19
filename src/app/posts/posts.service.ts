@@ -5,20 +5,24 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Router } from "@angular/router";
 import { Title } from '@angular/platform-browser';
+import { AuthService } from '../auth/auth.service';
+import { environment } from '../../environments/environment';
+const BACKEND_URL = environment.api_url + "/posts";
 
 @Injectable({
-  // we declare that this service should be created
-  // by the root application injector.
+
   providedIn: 'root',
 })
+
+
 
 export class PostsService {
 
   private posts: Post[] = [];
   private postsUpdated = new Subject<Post[]>();
-  constructor(private http: HttpClient, private router : Router) { }
-  getPosts(): void{
-    this.http.get<{ message: string, posts: any }>('http://localhost:3000/api/posts')
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
+  getPosts(): void {
+    this.http.get<{ message: string, posts: any }>(BACKEND_URL)
       .pipe(map((doc) => {
         return doc.posts.map((post) => {
           return {
@@ -40,12 +44,12 @@ export class PostsService {
 
 
   getPost(id: string): Observable<{ _id: string, title: string, body: string }> {
-    return this.http.get<{ _id: string, title: string, body: string }>('http://localhost:3000/api/posts/' + id);
+    return this.http.get<{ _id: string, title: string, body: string }>(BACKEND_URL + '/' + id);
   }
 
   addPost(post): void {
     console.log('post', post);
-    this.http.post('http://localhost:3000/api/posts', post)
+    this.http.post(BACKEND_URL, post)
       .subscribe((message) => {
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
@@ -55,7 +59,7 @@ export class PostsService {
 
   updatePost(id: string, title: string, body: string): void {
     const post = { id, title, body };
-    this.http.put('http://localhost:3000/api/posts/' + id, post)
+    this.http.put(BACKEND_URL + "/" + id, post)
       .subscribe(() => {
         console.log('Success');
         this.router.navigate(["/"]);
@@ -64,7 +68,7 @@ export class PostsService {
   }
 
   deletePost(id): void {
-    this.http.delete('http://localhost:3000/api/posts/' + id)
+    this.http.delete(BACKEND_URL + '/' + id)
       .subscribe((message) => {
         const updatedPosts = this.posts.filter((post) => {
           return post.id !== id;

@@ -4,6 +4,8 @@ import { ActivatedRoute, ParamMap } from "@angular/router";
 
 import { PostsService } from "../posts.service";
 import Post from "../../modal/post";
+import { Subscription } from "rxjs";
+import { AuthService } from "../../auth/auth.service";
 
 @Component({
   selector: "app-post-create",
@@ -19,10 +21,12 @@ export class PostCreateComponent implements OnInit {
 
   constructor(
     public postsService: PostsService,
-    public route: ActivatedRoute
+    public route: ActivatedRoute,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
+
     this.form = new FormGroup({
       title: new FormControl(null, {
         validators: [Validators.required, Validators.minLength(3)]
@@ -37,6 +41,7 @@ export class PostCreateComponent implements OnInit {
 
         this.postsService.getPost(this.postId).subscribe(postData => {
           this.isLoading = false;
+
           this.post = {
             id: postData._id,
             title: postData.title,
@@ -72,7 +77,7 @@ export class PostCreateComponent implements OnInit {
       this.postsService.updatePost(
         this.postId,
         this.form.value.title,
-        this.form.value.content
+        this.form.value.body
       );
       this.isLoading = false;
     }
