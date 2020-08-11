@@ -48,7 +48,7 @@ export class PostsService {
   }
 
   addPost(post): void {
-    console.log('post', post);
+
     this.http.post(BACKEND_URL, post)
       .subscribe((message) => {
         this.posts.push(post);
